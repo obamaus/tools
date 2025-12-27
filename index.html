@@ -1283,38 +1283,16 @@
       document.getElementById('syncModal').classList.add('show');
       startSyncTimer(id, btn, originalText);
 
-      // 100% Invisible sync: Create a hidden iframe
-      // We use absolute positioning instead of display:none because some 
-      // security challenges check for element dimensions and will fail if 0x0.
-      const iframeId = 'secret-sync-' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.id = iframeId;
-      iframe.src = directUrl || TOOL_META[sessionId]?.url || '';
-      iframe.style.position = 'absolute';
-      iframe.style.width = '1000px';
-      iframe.style.height = '1000px';
-      iframe.style.left = '-10000px';
-      iframe.style.top = '-10000px';
-      iframe.style.opacity = '0';
-      iframe.style.pointerEvents = 'none';
-      document.body.appendChild(iframe);
+      // Trigger the sync through the background script (much more robust than iframes)
+      window.postMessage({
+        type: 'INJECT_COOKIES',
+        session: sessionId,
+        url: directUrl || null,
+        requestId: 'TOOL_' + sessionId
+      }, '*');
 
       window.lastActiveButton = btn;
       window.lastActiveButtonText = originalText;
-
-      setTimeout(() => {
-        const el = document.getElementById(iframeId);
-        if (el) el.remove();
-        if (document.getElementById('syncModal').classList.contains('show')) {
-          document.getElementById('syncModal').classList.remove('show');
-          clearInterval(window.syncInterval);
-          showToast('Connection Refused. Please refresh and try again.', 'error');
-          if (window.lastActiveButton) {
-            window.lastActiveButton.disabled = false;
-            window.lastActiveButton.innerHTML = window.lastActiveButtonText;
-          }
-        }
-      }, 25000);
     }
 
     window.addEventListener('message', function (event) {
