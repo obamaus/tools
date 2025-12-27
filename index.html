@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - ObamaTools</title>
+  <meta name="description" content="Access 150+ premium tools with one click. Secure, effortless, and private.">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #030712;
+      --card: rgba(17, 24, 39, 0.7);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 0% 0%, rgba(37, 99, 235, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(37, 99, 235, 0.05) 0%, transparent 40%);
+    }
+
+    /* Navbar */
+    .nav {
+      padding: 12px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(3, 7, 18, 0.9);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      color: white;
+    }
+
+    .brand img {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-greeting {
+      text-align: right;
+      display: none;
+    }
+
+    .user-greeting.logged-in {
+      display: block;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 14px;
+    }
+
+    .user-expiry {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .fb-nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .fb-nav-link:hover {
+      color: var(--primary);
+    }
+
+    .auth-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .login-btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .logout-btn {
+      background: transparent;
+      color: var(--error);
+      border: 1px solid var(--error);
+    }
+
+    .logout-btn:hover {
+      background: var(--error);
+      color: white;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 60px 5% 30px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 48px);
+      margin-bottom: 16px;
+      line-height: 1.2;
+      color: #fff;
+      font-weight: 800;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Controls */
+    .controls {
+      padding: 0 5% 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      gap: 20px;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    #searchInput:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+      max-width: 100%;
+      scrollbar-width: none;
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: 0.2s;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 0 5% 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      transition: 0.2s border-color, 0.2s transform;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 39px;
+    }
+
+    .card-servers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .card-servers.single {
+      grid-template-columns: 1fr;
+    }
+
+    .server-btn {
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 12px;
+    }
+
+    .server-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Status Bar */
+    .status-container {
+      margin: 10px 0 30px;
+      text-align: center;
+    }
+
+    .status-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: rgba(17, 24, 39, 0.4);
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-dot.active {
+      background: #10b981;
+    }
+
+    .status-dot.inactive {
+      background: #ef4444;
+    }
+
+    /* Pricing */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin: 40px 0;
+      width: 100%;
+    }
+
+    .price-card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 32px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .price-card:hover {
+      transform: translateY(-12px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.02) 100%);
+    }
+
+    .price-card.popular {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, rgba(37, 99, 235, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%);
+      box-shadow: 0 0 40px rgba(37, 99, 235, 0.1);
+    }
+
+    .popular-badge {
+      position: absolute;
+      top: 20px;
+      right: -35px;
+      background: var(--primary);
+      color: white;
+      padding: 8px 40px;
+      transform: rotate(45deg);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .price-tier {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .price-val {
+      font-size: 56px;
+      font-weight: 800;
+      margin: 10px 0;
+      color: #fff;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .price-val span {
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .price-duration {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin: 0 0 40px;
+      text-align: left;
+      flex-grow: 1;
+    }
+
+    .feature-list li {
+      margin-bottom: 16px;
+      font-size: 14px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .feature-list li .check-icon {
+      color: var(--success);
+      font-size: 18px;
+    }
+
+    .pricing-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .pricing-btn:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+      transform: scale(1.02);
+    }
+
+    .pricing-btn.secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .pricing-btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Contact Box */
+    .contact-section {
+      padding: 60px 5%;
+      background: rgba(17, 24, 39, 0.4);
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .contact-box {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .contact-input {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .contact-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .contact-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transform: translateY(200%);
+      transition: 0.3s;
+      z-index: 1001;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+    }
+
+    /* Loader */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 1024px) {
+
+      .grid,
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+
+      .grid,
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        padding: 10px 20px;
+      }
+
+      .hero {
+        padding: 40px 20px;
+      }
+
+      .user-greeting {
+        display: none !important;
+      }
+    }
+
+    .hero-announcement {
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 12px 20px;
+      border-radius: 50px;
+      margin-bottom: 25px;
+      display: inline-block;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .hero-announcement:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .maintenance-note {
+      font-size: 11px;
+      color: var(--warning);
+      margin-bottom: 8px;
+      display: block;
+      font-weight: 600;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      transition: 0.3s opacity;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 40px;
+      border-radius: 24px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      transform: scale(0.9);
+      transition: 0.3s transform;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-overlay.show .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: white;
+    }
+
+    .modal-body {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .gift-box {
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px dashed var(--primary);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .gift-box p {
+      margin: 5px 0;
+      font-family: monospace;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .modal-close {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--primary-hover);
+    }
+
+    @media (max-width: 1024px) {
+
+      .grid,
+      .pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+
+      .grid,
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        padding: 10px 20px;
+      }
+
+      .hero {
+        padding: 40px 20px;
+      }
+
+      .user-greeting {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="nav">
+    <div class="brand">
+      <img src="icons/icon_128x128.png" alt="O" onerror="this.src='https://img.icons8.com/isometric/512/shield.png'">
+      ObamaTools
+    </div>
+    <div class="nav-actions">
+      <a href="https://facebook.com/obamatools/" target="_blank" class="fb-nav-link">Find us on Facebook</a>
+      <div id="userInfo" class="user-greeting">
+        <div id="greeting" class="user-name">Hello!</div>
+        <div id="expiry" class="user-expiry">Active Member</div>
+      </div>
+      <div id="authContainer">
+        <!-- Login or Logout injected here -->
+      </div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-announcement" onclick="showGiftModal()">
+      ✨ <b>FREE ACCESS:</b> Happy New Year 2026! Click to view gift credentials. ✨
+    </div>
+    <h1 id="heroTitle">Professional Toolkit for Creators & SEOs</h1>
+    <p id="heroDesc">One-click access to 150+ premium subscriptions. Securely shared, no data collected.</p>
+  </div>
+
+  <div class="status-container">
+    <div class="status-bar" id="extStatus">
+      <div class="status-dot inactive" id="extDot"></div>
+      <span id="extText">Connecting to Secure Core...</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search for tools (e.g. Netflix, ChatGPT, Semrush...)">
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setTab('all', this)">All Tools</button>
+      <button class="tab-btn" onclick="setTab('video', this)">Streaming</button>
+      <button class="tab-btn" onclick="setTab('ai', this)">AI gear</button>
+      <button class="tab-btn" onclick="setTab('seo', this)">Marketing</button>
+      <button class="tab-btn" onclick="setTab('design', this)">Creative</button>
+      <button class="tab-btn" onclick="setTab('learning', this)">Academy</button>
+      <button class="tab-btn" onclick="setTab('pricing', this)" style="color: var(--primary); font-weight: 800;">💎
+        Pricing</button>
+    </div>
+  </div>
+
+  <div class="grid" id="grid">
+    <!-- Injected tools -->
+  </div>
+
+  <div class="contact-section">
+    <div class="contact-container">
+      <div class="contact-box">
+        <h2 style="margin-bottom: 10px;">Need Help or Custom Plan?</h2>
+        <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">Our support team is available 24/7 to
+          assist you.</p>
+        <form onsubmit="sendContact(event)">
+          <input type="email" id="c_email" class="contact-input" placeholder="Your Email" required>
+          <textarea id="c_msg" class="contact-input" placeholder="Your Message" style="min-height: 100px;"
+            required></textarea>
+          <button type="submit" class="contact-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">
+    <span id="toastIcon">ℹ️</span>
+    <span id="toastMsg">Message content...</span>
+  </div>
+
+  <!-- New Year Modal -->
+  <div id="giftModal" class="modal-overlay" onclick="closeGiftModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title">🎉 Happy New Year 2026!</div>
+      <div class="modal-body">
+        We are celebrating 2026 by offering <b>FREE ACCESS</b> to everyone till 1 January 2026. Enjoy Netflix, Udemy,
+        Coursera, Prime Video and 150+ other premium tools!
+        <div class="gift-box">
+          <p><b>Username:</b> newyear2026</p>
+          <p><b>Password:</b> newyear2026</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeGiftModal()">Happy New Year!</button>
+    </div>
+  </div>
+
+  <!-- Facebook Modal -->
+  <div id="fbModal" class="modal-overlay" onclick="closeFbModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-title">📣 Support & Feedback</div>
+      <div class="modal-body">
+        Thank you for being part of ObamaTools! Please join our community on Facebook to let us know your feedback or if
+        you need any help.
+        <div class="gift-box" style="text-align: center;">
+          <a href="https://facebook.com/obamatools/" target="_blank"
+            style="color: var(--primary); font-weight: 800; text-decoration: none; font-size: 18px;">Find us on
+            Facebook</a>
+        </div>
+        <p style="margin-top: 15px; font-size: 13px;">Order premium plans via Message or Contact Box.</p>
+      </div>
+      <button class="modal-close" onclick="closeFbModal()">Maybe Later</button>
+    </div>
+  </div>
+
+  <!-- Data script -->
+  <script id="serviceData">
+    const SERVICES = [{ "id": 1, "name": "1of10", "url": "https://session.khanlegacyagency.com/1of10/1of10.php" }, { "id": 2, "name": "Adobe Stock Downloader", "url": "https://session.khanlegacyagency.com/Adobe%20Stock%20Downloader/Adobe%20Stock%20Downloader.php" }, { "id": 3, "name": "Ai Studios", "url": "https://session.khanlegacyagency.com/Ai%20Studios/Ai%20Studios.php" }, { "id": 4, "name": "Ai Video Builder", "url": "https://session.khanlegacyagency.com/Ai%20Video%20Builder/Ai%20Video%20Builder.php" }, { "id": 5, "name": "AnswerThePublic", "url": "https://session.khanlegacyagency.com/AnswerThePublic/AnswerThePublic.php" }, { "id": 6, "name": "Artistly", "url": "https://session.khanlegacyagency.com/Artistly/Artistly.php" }, { "id": 7, "name": "AudioStock", "url": "https://session.khanlegacyagency.com/AudioStock/AudioStock.php" }, { "id": 8, "name": "Audio_Stock", "url": "https://session.khanlegacyagency.com/AudioStock/Audio_Stock.php" }, { "id": 9, "name": "Avatar Builder", "url": "https://session.khanlegacyagency.com/Avatar%20Builder/Avatar%20Builder.php" }, { "id": 10, "name": "Beautiful Ai", "url": "https://session.khanlegacyagency.com/Beautiful%20Ai/Beautiful%20Ai.php" }, { "id": 11, "name": "Blackbox Ai", "url": "https://session.khanlegacyagency.com/Blackbox%20Ai/Blackbox%20Ai.php" }, { "id": 12, "name": "BuzzStream", "url": "https://session.khanlegacyagency.com/BuzzStream/BuzzStream.php" }, { "id": 13, "name": "BuzzStream", "url": "https://session.khanlegacyagency.com/BuzzStream/BuzzStream.php" }, { "id": 14, "name": "BuzzStream OTP", "url": "https://session.khanlegacyagency.com/BuzzStream%20OTP/BuzzStream%20OTP.php" }, { "id": 15, "name": "Bypass GPT", "url": "https://session.khanlegacyagency.com/Bypass%20GPT/Bypass%20GPT.php" }, { "id": 16, "name": "Canva Pro", "url": "https://session.khanlegacyagency.com/Canva%20Pro/Canva%20Pro.php" }, { "id": 17, "name": "CapCut", "url": "https://session.khanlegacyagency.com/CapCut/CapCut.php" }, { "id": 18, "name": "CapCut2", "url": "https://session.khanlegacyagency.com/CapCut2/CapCut2.php" }, { "id": 19, "name": "Chatgpt 3", "url": "https://session.khanlegacyagency.com/Chatgpt%203/Chatgpt%203.php" }, { "id": 20, "name": "Chatgpt Premium", "url": "https://session.khanlegacyagency.com/Chatgpt%20Premium/Chatgpt%20Premium.php" }, { "id": 21, "name": "Chatgpt2", "url": "https://session.khanlegacyagency.com/Chatgpt2/Chatgpt2.php" }, { "id": 22, "name": "Chatgpt3.1", "url": "https://session.khanlegacyagency.com/Chatgpt3.1/Chatgpt3.1.php" }, { "id": 23, "name": "Clideo", "url": "https://session.khanlegacyagency.com/Clideo/Clideo.php" }, { "id": 24, "name": "Closer Copy", "url": "https://session.khanlegacyagency.com/Closer%20Copy/Closer%20Copy.php" }, { "id": 25, "name": "Coursera", "url": "https://session.khanlegacyagency.com/Coursera/Coursera.php" }, { "id": 26, "name": "Cramly AI", "url": "https://session.khanlegacyagency.com/Cramly%20AI/Cramly%20AI.php" }, { "id": 27, "name": "Cramly AI", "url": "https://session.khanlegacyagency.com/Cramly%20AI/Cramly%20AI.php" }, { "id": 28, "name": "Creaitor AI", "url": "https://session.khanlegacyagency.com/Creaitor%20AI/Creaitor%20AI.php" }, { "id": 29, "name": "Crunchyroll", "url": "https://session.khanlegacyagency.com/Crunchyroll/Crunchyroll.php" }, { "id": 30, "name": "DeepSeek", "url": "https://session.khanlegacyagency.com/DeepSeek/DeepSeek.php" }, { "id": 31, "name": "Design AI", "url": "https://session.khanlegacyagency.com/Design%20AI/Design%20AI.php" }, { "id": 32, "name": "Designbeast", "url": "https://session.khanlegacyagency.com/Designbeast/Designbeast.php" }, { "id": 33, "name": "Download Liecence", "url": "https://session.khanlegacyagency.com/Download%20Liecence/Download%20Liecence.php" }, { "id": 34, "name": "Duolingo Super", "url": "https://session.khanlegacyagency.com/Duolingo%20Super/Duolingo%20Super.php" }, { "id": 35, "name": "Duolingo Super", "url": "https://session.khanlegacyagency.com/Duolingo%20Super/Duolingo%20Super.php" }, { "id": 36, "name": "Educative", "url": "https://session.khanlegacyagency.com/Educative/Educative.php" }, { "id": 37, "name": "Envato", "url": "https://session.khanlegacyagency.com/Envato/Envato.php" }, { "id": 38, "name": "Envato Elements", "url": "https://session.khanlegacyagency.com/Envato%20Elements/Envato%20Elements.php" }, { "id": 39, "name": "Epidemic Sound", "url": "https://session.khanlegacyagency.com/Epidemic%20Sound/Epidemic%20Sound.php" }, { "id": 40, "name": "Everland", "url": "https://session.khanlegacyagency.com/Everland/Everland.php" }, { "id": 41, "name": "Figma", "url": "https://session.khanlegacyagency.com/Figma/Figma.php" }, { "id": 42, "name": "Flexclip", "url": "https://session.khanlegacyagency.com/Flexclip/Flexclip.php" }, { "id": 43, "name": "FomoClips", "url": "https://session.khanlegacyagency.com/FomoClips/FomoClips.php" }, { "id": 44, "name": "Fotojet", "url": "https://session.khanlegacyagency.com/Fotojet/Fotojet.php" }, { "id": 45, "name": "Freepik", "url": "https://session.khanlegacyagency.com/Freepik/Freepik.php" }, { "id": 46, "name": "Gemini Veo Latest", "url": "https://session.khanlegacyagency.com/Gemini%20Veo%20Latest/Gemini%20Veo%20Latest.php" }, { "id": 47, "name": "GeminiPro Latest", "url": "https://session.khanlegacyagency.com/GeminiPro%20Latest/GeminiPro%20Latest.php" }, { "id": 48, "name": "Getty Images Downloader", "url": "https://session.khanlegacyagency.com/Getty%20Images%20Downloader/Getty%20Images%20Downloader.php" }, { "id": 49, "name": "Grammarly", "url": "https://session.khanlegacyagency.com/Grammarly/Grammarly.php" }, { "id": 50, "name": "Grok Ai", "url": "https://session.khanlegacyagency.com/Grok%20Ai/Grok%20Ai.php" }, { "id": 51, "name": "Grok Ai", "url": "https://session.khanlegacyagency.com/Grok%20Ai/Grok%20Ai.php" }, { "id": 52, "name": "Grothbarseo", "url": "https://session.khanlegacyagency.com/Grothbarseo/Grothbarseo.php" }, { "id": 53, "name": "Hailuo ai", "url": "https://session.khanlegacyagency.com/Hailuo%20ai/Hailuo%20ai.php" }, { "id": 54, "name": "Helium 10", "url": "https://session.khanlegacyagency.com/Helium%2010/Helium%2010.php" }, { "id": 55, "name": "hix", "url": "https://session.khanlegacyagency.com/hix/hix.php" }, { "id": 56, "name": "Hix Ai", "url": "https://session.khanlegacyagency.com/Hix%20Ai/Hix%20Ai.php" }, { "id": 57, "name": "Hix2", "url": "https://session.khanlegacyagency.com/Hix2/Hix2.php" }, { "id": 58, "name": "Humanpal %28 AI Video %29", "url": "https://session.khanlegacyagency.com/Humanpal%20%28%20AI%20Video%20%29/Humanpal%20%28%20AI%20Video%20%29.php" }, { "id": 59, "name": "Ice.bio", "url": "https://session.khanlegacyagency.com/Ice.bio/Ice.bio.php" }, { "id": 60, "name": "Icons8", "url": "https://session.khanlegacyagency.com/Icons8/Icons8.php" }, { "id": 61, "name": "Indexification", "url": "https://session.khanlegacyagency.com/Indexification/Indexification.php" }, { "id": 62, "name": "Istock Videos", "url": "https://session.khanlegacyagency.com/Istock%20Videos/Istock%20Videos.php" }, { "id": 63, "name": "Jasper AI", "url": "https://session.khanlegacyagency.com/Jasper%20AI/Jasper%20AI.php" }, { "id": 64, "name": "Jasper AI OTP", "url": "https://session.khanlegacyagency.com/Jasper%20AI%20OTP/Jasper%20AI%20OTP.php" }, { "id": 65, "name": "Jenni ai", "url": "https://session.khanlegacyagency.com/Jenni%20ai/Jenni%20ai.php" }, { "id": 66, "name": "JenniAI", "url": "https://session.khanlegacyagency.com/JenniAI/JenniAI.php" }, { "id": 67, "name": "joy", "url": "https://session.khanlegacyagency.com/joy/joy.php" }, { "id": 68, "name": "Keysearch", "url": "https://session.khanlegacyagency.com/Keysearch/Keysearch.php" }, { "id": 69, "name": "Keyword io", "url": "https://session.khanlegacyagency.com/Keyword%20io/Keyword%20io.php" }, { "id": 70, "name": "Kittl", "url": "https://session.khanlegacyagency.com/Kittl/Kittl.php" }, { "id": 71, "name": "LeadPal", "url": "https://session.khanlegacyagency.com/LeadPal/LeadPal.php" }, { "id": 72, "name": "Leonardo Ai", "url": "https://session.khanlegacyagency.com/Leonardo%20Ai/Leonardo%20Ai.php" }, { "id": 73, "name": "Linguix Ai", "url": "https://session.khanlegacyagency.com/Linguix%20Ai/Linguix%20Ai.php" }, { "id": 74, "name": "Linkedin Learning", "url": "https://session.khanlegacyagency.com/Linkedin%20Learning/Linkedin%20Learning.php" }, { "id": 75, "name": "Links Indexer", "url": "https://session.khanlegacyagency.com/Links%20Indexer/Links%20Indexer.php" }, { "id": 76, "name": "Luvvoice", "url": "https://session.khanlegacyagency.com/Luvvoice/Luvvoice.php" }, { "id": 77, "name": "Mangools", "url": "https://session.khanlegacyagency.com/Mangools/Mangools.php" }, { "id": 78, "name": "Motion Array", "url": "https://session.khanlegacyagency.com/Motion%20Array/Motion%20Array.php" }, { "id": 79, "name": "Moz Pro", "url": "https://session.khanlegacyagency.com/Moz%20Pro/Moz%20Pro.php" }, { "id": 80, "name": "Moz Pro2", "url": "https://session.khanlegacyagency.com/Moz%20Pro2/Moz%20Pro2.php" }, { "id": 81, "name": "MozPro", "url": "https://session.khanlegacyagency.com/MozPro/MozPro.php" }, { "id": 82, "name": "Netflix", "url": "https://session.khanlegacyagency.com/Netflix/Netflix.php" }, { "id": 83, "name": "Netflix", "url": "https://session.khanlegacyagency.com/Netflix/Netflix.php" }, { "id": 84, "name": "Neuron Writer", "url": "https://session.khanlegacyagency.com/Neuron%20Writer/Neuron%20Writer.php" }, { "id": 85, "name": "Niche Scraper", "url": "https://session.khanlegacyagency.com/Niche%20Scraper/Niche%20Scraper.php" }, { "id": 86, "name": "Notegpt.io", "url": "https://session.khanlegacyagency.com/Notegpt.io/Notegpt.io.php" }, { "id": 87, "name": "Perplexity Ai", "url": "https://session.khanlegacyagency.com/Perplexity%20Ai/Perplexity%20Ai.php" }, { "id": 88, "name": "PhotoRoom", "url": "https://session.khanlegacyagency.com/PhotoRoom/PhotoRoom.php" }, { "id": 89, "name": "PhotoRoom", "url": "https://session.khanlegacyagency.com/PhotoRoom/PhotoRoom.php" }, { "id": 90, "name": "PhotoRoom OTP", "url": "https://session.khanlegacyagency.com/PhotoRoom%20OTP/PhotoRoom%20OTP.php" }, { "id": 91, "name": "Pic Monkey", "url": "https://session.khanlegacyagency.com/Pic%20Monkey/Pic%20Monkey.php" }, { "id": 92, "name": "PicMonkey", "url": "https://session.khanlegacyagency.com/PicMonkey/PicMonkey.php" }, { "id": 93, "name": "PicsArt", "url": "https://session.khanlegacyagency.com/PicsArt/PicsArt.php" }, { "id": 94, "name": "Placeit", "url": "https://session.khanlegacyagency.com/Placeit/Placeit.php" }, { "id": 95, "name": "Placeit2", "url": "https://session.khanlegacyagency.com/Placeit2/Placeit2.php" }, { "id": 96, "name": "Plural Sight", "url": "https://session.khanlegacyagency.com/Plural%20Sight/Plural%20Sight.php" }, { "id": 97, "name": "Prezi.ai", "url": "https://session.khanlegacyagency.com/Prezi.ai/Prezi.ai.php" }, { "id": 98, "name": "Prime Video", "url": "https://session.khanlegacyagency.com/Prime%20Video/Prime%20Video.php" }, { "id": 99, "name": "Quillbot", "url": "https://session.khanlegacyagency.com/Quillbot/Quillbot.php" }, { "id": 100, "name": "Rewritify Ai", "url": "https://session.khanlegacyagency.com/Rewritify%20Ai/Rewritify%20Ai.php" }, { "id": 101, "name": "Rezi.Ai", "url": "https://session.khanlegacyagency.com/Rezi.Ai/Rezi.Ai.php" }, { "id": 102, "name": "Rivalflow", "url": "https://session.khanlegacyagency.com/Rivalflow/Rivalflow.php" }, { "id": 103, "name": "RobinizeAi", "url": "https://session.khanlegacyagency.com/RobinizeAi/RobinizeAi.php" }, { "id": 104, "name": "Rytr", "url": "https://session.khanlegacyagency.com/Rytr/Rytr.php" }, { "id": 105, "name": "Scite AI", "url": "https://session.khanlegacyagency.com/Scite%20AI/Scite%20AI.php" }, { "id": 106, "name": "Scribd", "url": "https://session.khanlegacyagency.com/Scribd/Scribd.php" }, { "id": 107, "name": "Sell The Trend", "url": "https://session.khanlegacyagency.com/Sell%20The%20Trend/Sell%20The%20Trend.php" }, { "id": 108, "name": "semrush", "url": "https://session.khanlegacyagency.com/semrush/semrush.php" }, { "id": 109, "name": "Semrush2", "url": "https://session.khanlegacyagency.com/Semrush2/Semrush2.php" }, { "id": 110, "name": "SEO Optimer", "url": "https://session.khanlegacyagency.com/SEO%20Optimer/SEO%20Optimer.php" }, { "id": 111, "name": "SEO Site Checkup", "url": "https://session.khanlegacyagency.com/SEO%20Site%20Checkup/SEO%20Site%20Checkup.php" }, { "id": 112, "name": "Seobility", "url": "https://session.khanlegacyagency.com/Seobility/Seobility.php" }, { "id": 113, "name": "Shutterstock Downloader", "url": "https://session.khanlegacyagency.com/Shutterstock%20Downloader/Shutterstock%20Downloader.php" }, { "id": 114, "name": "SimilarWeb", "url": "https://session.khanlegacyagency.com/SimilarWeb/SimilarWeb.php" }, { "id": 115, "name": "Sketchgenius", "url": "https://session.khanlegacyagency.com/Sketchgenius/Sketchgenius.php" }, { "id": 116, "name": "SkillShare", "url": "https://session.khanlegacyagency.com/SkillShare/SkillShare.php" }, { "id": 117, "name": "Slidebean", "url": "https://session.khanlegacyagency.com/Slidebean/Slidebean.php" }, { "id": 118, "name": "Slidebean", "url": "https://session.khanlegacyagency.com/Slidebean/Slidebean.php" }, { "id": 119, "name": "SlideShare", "url": "https://session.khanlegacyagency.com/SlideShare/SlideShare.php" }, { "id": 120, "name": "Snackeet", "url": "https://session.khanlegacyagency.com/Snackeet/Snackeet.php" }, { "id": 121, "name": "SnapiedAI", "url": "https://session.khanlegacyagency.com/SnapiedAI/SnapiedAI.php" }, { "id": 122, "name": "Sora", "url": "https://session.khanlegacyagency.com/Sora/Sora.php" }, { "id": 123, "name": "Sora", "url": "https://session.khanlegacyagency.com/Sora/Sora.php" }, { "id": 124, "name": "Sora2", "url": "https://session.khanlegacyagency.com/Sora2/Sora2.php" }, { "id": 125, "name": "StealthWriter", "url": "https://session.khanlegacyagency.com/StealthWriter/StealthWriter.php" }, { "id": 126, "name": "Story Blocks Downloader", "url": "https://session.khanlegacyagency.com/Story%20Blocks%20Downloader/Story%20Blocks%20Downloader.php" }, { "id": 127, "name": "StoryBase", "url": "https://session.khanlegacyagency.com/StoryBase/StoryBase.php" }, { "id": 128, "name": "Taplio", "url": "https://session.khanlegacyagency.com/Taplio/Taplio.php" }, { "id": 129, "name": "Toons AI", "url": "https://session.khanlegacyagency.com/Toons%20AI/Toons%20AI.php" }, { "id": 130, "name": "Ubersuggest", "url": "https://session.khanlegacyagency.com/Ubersuggest/Ubersuggest.php" }, { "id": 131, "name": "Udemy", "url": "https://session.khanlegacyagency.com/Udemy/Udemy.php" }, { "id": 132, "name": "Udemy2", "url": "https://session.khanlegacyagency.com/Udemy2/Udemy2.php" }, { "id": 133, "name": "Vecteezy", "url": "https://session.khanlegacyagency.com/Vecteezy/Vecteezy.php" }, { "id": 134, "name": "Videoexpress Ai", "url": "https://session.khanlegacyagency.com/Videoexpress%20Ai/Videoexpress%20Ai.php" }, { "id": 135, "name": "VidIQ", "url": "https://session.khanlegacyagency.com/VidIQ/VidIQ.php" }, { "id": 136, "name": "Vidtoons 2.1", "url": "https://session.khanlegacyagency.com/Vidtoons%202.1/Vidtoons%202.1.php" }, { "id": 137, "name": "Vidtoons Lestest", "url": "https://session.khanlegacyagency.com/Vidtoons%20Lestest/Vidtoons%20Lestest.php" }, { "id": 138, "name": "Viggle AI", "url": "https://session.khanlegacyagency.com/Viggle%20AI/Viggle%20AI.php" }, { "id": 139, "name": "Viral Launch", "url": "https://session.khanlegacyagency.com/Viral%20Launch/Viral%20Launch.php" }, { "id": 140, "name": "Vista Create", "url": "https://session.khanlegacyagency.com/Vista%20Create/Vista%20Create.php" }, { "id": 141, "name": "Woorank", "url": "https://session.khanlegacyagency.com/Woorank/Woorank.php" }, { "id": 142, "name": "WordTracker", "url": "https://session.khanlegacyagency.com/WordTracker/WordTracker.php" }, { "id": 143, "name": "Wordtune", "url": "https://session.khanlegacyagency.com/Wordtune/Wordtune.php" }, { "id": 144, "name": "Wordtune", "url": "https://session.khanlegacyagency.com/Wordtune/Wordtune.php" }, { "id": 145, "name": "WriteHuman", "url": "https://session.khanlegacyagency.com/WriteHuman/WriteHuman.php" }, { "id": 146, "name": "Writerzen", "url": "https://session.khanlegacyagency.com/Writerzen/Writerzen.php" }, { "id": 147, "name": "You.com", "url": "https://session.khanlegacyagency.com/You.com/You.com.php" }, { "id": 148, "name": "Youtube Premium", "url": "https://session.khanlegacyagency.com/Youtube%20Premium/Youtube%20Premium.php" }, { "id": 149, "name": "Zonguru", "url": "https://session.khanlegacyagency.com/Zonguru/Zonguru.php" }];
+  </script>
+
+  <script>
+    const K = 73;
+    let isExtensionReady = false;
+    let currentTab = 'all';
+    let currentUser = null;
+
+    const BLACKLIST = [
+      '1of10', 'Ai Studios', 'Ai Video Builder', 'Audio_Stock', 'Beautiful Ai', 'Blackbox Ai',
+      'BuzzStream OTP', 'Designbeast', 'Download Liecence', 'Grothbarseo',
+      'Humanpal', 'Ice.bio', 'Jenni ai', 'JenniAI', 'joy', 'Keysearch', 'LeadPal',
+      'Neuron Writer', 'Niche Scraper', 'PhotoRoom OTP', 'Rezi.Ai',
+      'Sell The Trend', 'SEO Site Checkup', 'Seobility', 'Slidebean', 'Snackeet',
+      'SnapiedAI', 'StealthWriter', 'Toons AI', 'Vidtoons 2.1',
+      'Vidtoons Lestest', 'Viggle AI', 'Viral Launch', 'Woorank', 'WordTracker',
+      'WriteHuman', 'Writerzen', 'Zonguru'
+    ];
+
+    const TOOL_META = {
+      'Netflix': { cat: 'video', desc: 'Premium movies & TV shows in Ultra HD.' },
+      'Coursera': { cat: 'learning', desc: 'Certificates from world-class universities.' },
+      'Canva': { cat: 'design', desc: 'Professional design templates and elements.' },
+      'ChatGPT': { cat: 'ai', desc: 'Next-gen AI assistant for all your tasks.' },
+      'Adobe': { cat: 'design', desc: 'Creative Cloud apps for design & video.' },
+      'Envato': { cat: 'design', desc: 'Unlimited creative assets for any project.' },
+      'Grammarly': { cat: 'learning', desc: 'Advanced writing and grammar assistant.' },
+      'Prime Video': { cat: 'video', desc: 'Exclusive Amazon originals and more.' },
+      'Crunchyroll': { cat: 'video', desc: 'The world\'s largest anime library.' },
+      'Duolingo': { cat: 'learning', desc: 'Language learning with premium perks.' },
+      'Scribd': { cat: 'learning', desc: 'Digital library for books & documents.' },
+      'Udemy': { cat: 'learning', desc: 'On-demand courses from expert creators.' },
+      'Semrush': { cat: 'seo', desc: 'All-in-one digital marketing platform.' },
+      'Moz': { cat: 'seo', desc: 'Advanced SEO metrics and insights.' },
+      'Quillbot': { cat: 'learning', desc: 'AI-powered paraphrasing tool.' },
+      'DeepSeek': { cat: 'ai', desc: 'Smart AI for coding and research.' },
+      'Figma': { cat: 'design', desc: 'Collaborative UI/UX design workspace.' },
+      'Freepik': { cat: 'design', desc: 'High-quality vectors and stock photos.' },
+      'VidIQ': { cat: 'seo', desc: 'Powerful YouTube video optimization.' },
+      'Sora': { cat: 'ai', desc: 'Hyper-realistic text-to-video AI.' },
+      'Hix': { cat: 'ai', desc: 'Productivity suite powered by Gemini.' },
+      'CapCut': { cat: 'design', desc: 'Intuitive video editing for creators.' },
+      'Epidemic Sound': { cat: 'video', desc: 'Royalty-free music for your content.' },
+      'SkillShare': { cat: 'learning', desc: 'Creative classes taught by experts.' },
+      'Jasper': { cat: 'ai', desc: 'Premium AI content writing assistant.' },
+      'Ubersuggest': { cat: 'seo', desc: 'Keyword research and SEO analysis.' }
+    };
+
+    function getGreeting() {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good Morning";
+      if (hour < 17) return "Good Afternoon";
+      return "Good Evening";
+    }
+
+    function loadUser() {
+      try {
+        const enc = localStorage.getItem('_ot_session');
+        if (!enc) {
+          renderAuthLinks(false);
+          return;
+        }
+        const b = atob(enc);
+        const bytes = new Uint8Array(b.length);
+        for (let i = 0; i < b.length; i++) bytes[i] = b.charCodeAt(i) ^ K;
+        currentUser = JSON.parse(new TextDecoder().decode(bytes));
+
+        document.getElementById('userInfo').classList.add('logged-in');
+        document.getElementById('greeting').innerHTML = `${getGreeting()}, <span class="user-name">${currentUser.username}</span>!`;
+        document.getElementById('expiry').innerText = `Active Account`;
+
+        renderAuthLinks(true);
+
+        if (currentUser.username === 'newyear2026') {
+          const hasShown = sessionStorage.getItem('_ot_fb_shown');
+          if (!hasShown) {
+            setTimeout(showFbModal, 2000);
+            sessionStorage.setItem('_ot_fb_shown', 'true');
+          }
+        }
+      } catch (e) {
+        renderAuthLinks(false);
+      }
+    }
+
+    function renderAuthLinks(logged) {
+      const container = document.getElementById('authContainer');
+      if (logged) {
+        container.innerHTML = `<button class="auth-btn logout-btn" onclick="logout()">Logout</button>`;
+      } else {
+        container.innerHTML = `<a href="login.html" class="auth-btn login-btn">Login</a>`;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('_ot_session');
+      window.location.reload();
+    }
+
+    function setTab(cat, btn) {
+      currentTab = cat;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    function getGroups() {
+      const groups = {};
+      SERVICES.forEach(s => {
+        if (BLACKLIST.includes(s.name)) return;
+
+        let base = s.name.replace(/\s*[0-9](\.[0-9])?$/, '').trim();
+        if (base.toLowerCase() === 'chatgpt') base = 'ChatGPT';
+
+        if (!groups[base]) {
+          groups[base] = {
+            name: base,
+            servers: [],
+            meta: TOOL_META[Object.keys(TOOL_META).find(k => base.includes(k))] || { cat: 'other', desc: 'Premium shared access for this platform.' }
+          };
+        }
+        groups[base].servers.push(s);
+      });
+      return groups;
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      const query = document.getElementById('searchInput').value.toLowerCase();
+
+      if (currentTab === 'pricing') {
+        renderPricing();
+        return;
+      }
+
+      const groups = getGroups();
+      Object.values(groups).forEach(g => {
+        if (currentTab !== 'all' && g.meta.cat !== currentTab) return;
+        if (query && !g.name.toLowerCase().includes(query)) return;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-icon">${getIcon(g.meta.cat)}</div>
+                        <div>
+                          <span class="maintenance-note">⚡ Auto-updates every hour</span>
+                          <h2 class="card-title">${g.name}</h2>
+                        </div>
+                    </div>
+                    <p class="card-desc">${g.meta.desc}</p>
+                    <div class="card-servers ${g.servers.length === 1 ? 'single' : ''}">
+                        ${g.servers.map((s, idx) => `
+                            <button class="server-btn" onclick="handleToolAction(${s.id}, this)">
+                                ${g.servers.length > 1 ? `Server ${idx + 1}` : (g.meta.cat === 'video' ? '🎬 Watch Now' : (g.meta.cat === 'learning' ? '🎓 Start Learning' : '🚀 Launch Tool'))}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+        grid.appendChild(card);
+      });
+
+      if (grid.innerHTML === '') {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted);">No tools found matching your search.</div>`;
+      }
+    }
+
+    function renderPricing() {
+      const grid = document.getElementById('grid');
+      grid.style.display = 'grid';
+      grid.innerHTML = `
+        <div class="pricing-grid" style="grid-column: 1/-1;">
+          <div style="grid-column: 1/-1; text-align: center; margin-bottom: 40px;">
+            <p style="color: var(--primary); font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 2px;">Premium Plans</p>
+            <h2 style="font-size: 36px; margin-top: 10px;">Choose Your Access Tier</h2>
+            <p style="color: var(--text-muted); font-size: 15px; margin-top: 10px;">99% uptime guaranteed. Message us on Facebook or use the contact form to order.</p>
+          </div>
+          
+          <div class="price-card">
+            <div class="price-tier">Basic Access</div>
+            <div class="price-val">300 <span>BDT</span></div>
+            <p class="price-duration">Valid for 30 Days</p>
+            <ul class="feature-list">
+              <li><span class="check-icon">✓</span> 150+ Premium Tools</li>
+              <li><span class="check-icon">✓</span> One-Click Connection</li>
+              <li><span class="check-icon">✓</span> Regular Account Updates</li>
+              <li><span class="check-icon">✓</span> Standard Customer Support</li>
+            </ul>
+            <a href="https://facebook.com/obamatools/" target="_blank" class="pricing-btn secondary">
+              Message on Facebook
+            </a>
+          </div>
+
+          <div class="price-card popular">
+            <div class="popular-badge">BEST VALUE</div>
+            <div class="price-tier">Professional</div>
+            <div class="price-val">750 <span>BDT</span></div>
+            <p class="price-duration">Valid for 90 Days</p>
+            <ul class="feature-list">
+              <li><span class="check-icon">✓</span> <b>Everything in Basic</b></li>
+              <li><span class="check-icon">✓</span> Priority Server Access</li>
+              <li><span class="check-icon">✓</span> 24/7 VIP Priority Support</li>
+              <li><span class="check-icon">✓</span> Early Access to New Tools</li>
+            </ul>
+            <a href="https://facebook.com/obamatools/" target="_blank" class="pricing-btn">
+              Get Started Now
+            </a>
+          </div>
+
+          <div class="price-card">
+            <div class="price-tier">Elite / Empire</div>
+            <div class="price-val">2200 <span>BDT</span></div>
+            <p class="price-duration">Valid for 365 Days</p>
+            <ul class="feature-list">
+              <li><span class="check-icon">✓</span> <b>Full Year of Access</b></li>
+              <li><span class="check-icon">✓</span> Ultimate Saving Plan</li>
+              <li><span class="check-icon">✓</span> Dedicated Account Manager</li>
+              <li><span class="check-icon">✓</span> Custom Multi-Device Setup</li>
+            </ul>
+            <a href="https://facebook.com/obamatools/" target="_blank" class="pricing-btn secondary">
+              Contact for Elite Access
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleToolAction(id, btn) {
+      if (!currentUser) {
+        showToast('Please login to access tools', 'error');
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+      }
+
+      if (!isExtensionReady) {
+        showToast('Download Extension First', 'error');
+        setTimeout(() => window.location.href = 'download.html', 1500);
+        return;
+      }
+
+      const service = SERVICES.find(s => String(s.id) === String(id));
+      authorize(id, btn, service ? service.url : null);
+    }
+
+    async function authorize(id, btn, url) {
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div> Connecting...';
+      showToast('Synchronizing session tokens...', 'info');
+      window.postMessage({ type: 'INJECT_COOKIES', session: id, url: url || null, requestId: 'web_' + Date.now() }, '*');
+      setTimeout(() => {
+        if (btn.innerText.includes('Connecting')) {
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        }
+      }, 10000);
+    }
+
+    window.addEventListener('message', function (event) {
+      if (event.data.type === 'EXTENSION_RESPONSE') {
+        const btn = document.querySelector('.spinner')?.parentElement;
+        if (btn) { btn.disabled = false; btn.innerHTML = 'Connected'; }
+
+        if (event.data.response && event.data.response.success) {
+          showToast('Sync Successful! Enjoy access.', 'success');
+        } else {
+          const errMsg = event.data.response?.error || 'Tool connection failed. Our servers update every hour.';
+          showToast(errMsg, 'error');
+        }
+      } else if (event.data.type === 'EXTENSION_READY') {
+        updateExtStatus(true);
+      }
+    });
+
+    function updateExtStatus(ready) {
+      isExtensionReady = ready;
+      const dot = document.getElementById('extDot');
+      const text = document.getElementById('extText');
+      if (ready) {
+        dot.className = 'status-dot active';
+        text.innerText = 'Secure Core Connected';
+      } else {
+        dot.className = 'status-dot inactive';
+        text.innerHTML = 'Secure Core Offline | <a href="download.html" style="color:var(--primary); font-weight:700; text-decoration:none;">Install Shield</a>';
+      }
+      render();
+    }
+
+    function getIcon(cat) {
+      const icons = { video: '🎬', ai: '🤖', design: '🎨', learning: '🎓', seo: '📈', academy: '🎓', other: '🛡️' };
+      return icons[cat] || '⚡';
+    }
+
+    function showToast(msg, type = 'info') {
+      const t = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      t.className = `toast show ${type}`;
+      document.getElementById('toastIcon').innerText = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function ping() {
+      if (document.documentElement.getAttribute('data-extension-installed') === 'true') {
+        updateExtStatus(true);
+      } else {
+        window.postMessage({ type: 'PING_EXTENSION', requestId: 'ping_' + Date.now() }, '*');
+      }
+    }
+
+    function sendContact(e) {
+      e.preventDefault();
+      const email = document.getElementById('c_email').value;
+      const msg = document.getElementById('c_msg').value;
+      window.location.href = `mailto:barakobamabarak27@gmail.com?subject=Inquiry from ${email}&body=${encodeURIComponent(msg)}`;
+      showToast('Opening Mailer...', 'success');
+    }
+
+    function showGiftModal() {
+      document.getElementById('giftModal').classList.add('show');
+    }
+
+    function closeGiftModal(e) {
+      document.getElementById('giftModal').classList.remove('show');
+    }
+
+    function showFbModal() {
+      document.getElementById('fbModal').classList.add('show');
+    }
+
+    function closeFbModal(e) {
+      document.getElementById('fbModal').classList.remove('show');
+    }
+
+
+
+    document.getElementById('searchInput').addEventListener('input', render);
+
+    loadUser();
+    ping();
+    // Delay the periodic check to avoid rapid annoying refreshes
+    setInterval(ping, 6000); // Check every 6 seconds instead of 3
+    render();
+  </script>
+</body>
+
+</html>

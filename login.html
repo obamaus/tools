@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ObamaTools</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --accent: #8b5cf6;
+            --bg: #030712;
+            --card: rgba(17, 24, 39, 0.7);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+        }
+
+        .login-card {
+            background: var(--card);
+            backdrop-filter: blur(24px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.8s ease-out;
+            margin: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #94a3b8;
+            margin-left: 4px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            color: #f87171;
+            font-size: 14px;
+            margin-top: 20px;
+            background: rgba(248, 113, 113, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(248, 113, 113, 0.2);
+            display: none;
+        }
+
+        .announcement-banner {
+            background: var(--primary);
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: 0.3s opacity;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: 0.3s transform;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .modal-body {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .gift-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px dashed var(--primary);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .gift-box p {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 13px;
+            color: #f8fafc;
+        }
+
+        .modal-close {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+        }
+
+        .modal-close:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-card">
+        <div class="announcement-banner" onclick="showGiftModal()">
+            🎉 Happy New Year 2026! Free Access Available! Click for details.
+        </div>
+        <div class="logo">
+            <img src="icons/icon_128x128.png" alt="O"
+                onerror="this.src='https://img.icons8.com/isometric/512/shield.png'">
+        </div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Enter your credentials to access tools</p>
+
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password" autocomplete="off">
+        </div>
+
+        <button id="loginBtn" onclick="T_login()">Login</button>
+        <p class="error-msg" id="errorMsg"></p>
+
+        <p style="margin-top: 25px; color: #475569; font-size: 13px;">Explore over 150+ premium tools inside</p>
+        <p style="margin-top: 20px; font-size: 12px; color: #64748b;">Free Access User: <b>newyear2026</b> | Pass:
+            <b>newyear2026</b>
+        </p>
+    </div>
+
+    <!-- New Year Modal -->
+    <div id="giftModal" class="modal-overlay" onclick="closeGiftModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title">🎉 Happy New Year 2026!</div>
+            <div class="modal-body">
+                We are celebrating 2026 by offering <b>FREE ACCESS</b> to everyone till 1 January 2026. Enjoy Netflix,
+                Udemy, Coursera, Prime Video and 150+ other premium tools!
+                <div class="gift-box">
+                    <p><b>Username:</b> newyear2026</p>
+                    <p><b>Password:</b> newyear2026</p>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeGiftModal()">Happy New Year!</button>
+        </div>
+    </div>
+
+    <script>
+        const K = 73;
+
+        const D = (s) => {
+            try {
+                s = s.replace(/[^A-Za-z0-9+/=]/g, "");
+                if (!s) return "[]";
+                const b = atob(s);
+                const bytes = new Uint8Array(b.length);
+                for (let i = 0; i < b.length; i++) bytes[i] = b.charCodeAt(i) ^ K;
+                return new TextDecoder().decode(bytes);
+            } catch (e) { return "[]"; }
+        };
+
+        async function T_login() {
+            const uI = document.getElementById('username').value.trim();
+            const pI = document.getElementById('password').value.trim();
+            const eE = document.getElementById('errorMsg');
+            const bT = document.getElementById('loginBtn');
+
+            if (!uI || !pI) return;
+
+            bT.disabled = true;
+            bT.innerText = "Authenticating...";
+            eE.style.display = 'none';
+
+            try {
+                if (window.location.protocol === 'file:') {
+                    throw new Error("Local file detected. Use a server or Netlify.");
+                }
+
+                const r = await fetch('users.json?t=' + Date.now());
+                if (!r.ok) throw new Error("Database load failed");
+
+                const raw = await r.text();
+                const decoded = D(raw);
+                const uS = JSON.parse(decoded);
+
+                const u = uS.find(x => x.username === uI && x.password === pI);
+
+                if (u) {
+                    const n = new Date();
+                    const x = new Date(u.expiration);
+
+                    if (n > x) {
+                        eE.textContent = "Your subscription has expired.";
+                        eE.style.display = 'block';
+                    } else {
+                        const sD = JSON.stringify(u);
+                        const sB = new Uint8Array(sD.length);
+                        for (let i = 0; i < sD.length; i++) sB[i] = sD.charCodeAt(i) ^ K;
+                        localStorage.setItem('_ot_session', btoa(String.fromCharCode(...sB)));
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    eE.textContent = "Invalid username or password.";
+                    eE.style.display = 'block';
+                }
+            } catch (err) {
+                eE.textContent = "Login error: " + err.message;
+                eE.style.display = 'block';
+            } finally {
+                bT.disabled = false;
+                bT.innerText = "Login";
+            }
+        }
+
+        function showGiftModal() {
+            document.getElementById('giftModal').classList.add('show');
+        }
+
+        function closeGiftModal(e) {
+            document.getElementById('giftModal').classList.remove('show');
+        }
+    </script>
+</body>
+
+</html>
