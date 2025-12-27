@@ -1295,12 +1295,12 @@
 
       async function authorize(id, btn, url) {
         const originalText = btn.innerHTML;
-        const sessionId = btn.getAttribute('data-id');
-        const directUrl = btn.getAttribute('data-url');
+        const sessionId = id;
+        const directUrl = url;
 
         // Reset and show beautiful modal
         document.getElementById('syncProgress').style.strokeDashoffset = 326.7;
-        document.getElementById('syncTimer').innerText = '10';
+        document.getElementById('syncTimer').innerText = '25'; // Matches the startSyncTimer value
         document.querySelectorAll('.sync-step').forEach((s, i) => s.className = i === 0 ? 'sync-step active' : 'sync-step');
         document.getElementById('syncModal').classList.add('show');
         startSyncTimer(id, btn, originalText);
