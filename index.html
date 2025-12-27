@@ -928,7 +928,7 @@
             <circle id="syncProgress" class="progress-ring-circle" stroke="var(--primary)" stroke-width="8"
               stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" />
           </svg>
-          <div class="sync-timer" id="syncTimer">45</div>
+          <div class="sync-timer" id="syncTimer">60</div>
         </div>
         <h2 id="syncTitle">Establishing Secure Connection</h2>
         <p id="syncDesc">Synchronizing your premium session with the secure core. Please do not close this tab.</p>
@@ -1237,8 +1237,8 @@
         const timeText = document.getElementById('syncTimer');
         const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 
-        let timeLeft = 45;
-        let totalTime = 45;
+        let timeLeft = 60;
+        let totalTime = 60;
         const circumference = 326.7;
 
         ring.style.strokeDasharray = circumference;
@@ -1264,11 +1264,11 @@
           ring.style.strokeDashoffset = offset;
           timeText.innerText = Math.ceil(timeLeft);
 
-          // Update steps based on a 45s window
-          if (timeLeft < 40 && timeLeft >= 20) {
+          // Update steps based on a 60s window
+          if (timeLeft < 55 && timeLeft >= 25) {
             steps[0].className = 'sync-step done';
             steps[1].className = 'sync-step active';
-          } else if (timeLeft < 20) {
+          } else if (timeLeft < 25) {
             steps[1].className = 'sync-step done';
             steps[2].className = 'sync-step active';
           }
