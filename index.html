@@ -788,16 +788,39 @@
     }
 
     .sync-content {
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      max-width: 450px;
-      padding: 40px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95));
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      max-width: 480px;
+      padding: 50px 40px;
       text-align: center;
-      border-radius: 30px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 40px;
+      box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(37, 99, 235, 0.1);
       transform: scale(0.9);
-      transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sync-content::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(37, 99, 235, 0.05) 0%, transparent 50%);
+      animation: rotate-slow 10s linear infinite;
+    }
+
+    @keyframes rotate-slow {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .modal-overlay.show .sync-content {
@@ -816,6 +839,7 @@
       transform-origin: 50% 50%;
       stroke-dasharray: 326.7;
       stroke-dashoffset: 326.7;
+      filter: drop-shadow(0 0 10px var(--primary));
     }
 
     .sync-timer {
@@ -1403,19 +1427,19 @@
         const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 
         const funMessages = [
-          "Initializing Ghost Protocol...",
-          "Bypassing LiteSpeed Security...",
-          "Negotiating Secure Handshake...",
-          "Decrypting Session Tokens...",
-          "Establishing Encrypted Tunnel...",
-          "Extracting Premium Artifacts...",
-          "Polishing Secure Connection...",
-          "Bypassing Anti-Bot Check...",
-          "Almost there, stay focused..."
+          "Establishing Secure Link...",
+          "Bypassing LiteSpeed Shield...",
+          "Negotiating Handshake...",
+          "Injecting Session Fabric...",
+          "Establishing Proxy Tunnel...",
+          "Verifying Access Credentials...",
+          "Syncing Premium Artifacts...",
+          "Encryption Finalizing...",
+          "Security layers active..."
         ];
 
-        let timeLeft = 25;
-        let totalTime = 25;
+        let timeLeft = 15; // Faster visual timer
+        let totalTime = 15;
         const circumference = 326.7;
 
         ring.style.strokeDasharray = circumference;
@@ -1427,7 +1451,7 @@
             clearInterval(timer);
             if (document.getElementById('syncModal').classList.contains('show')) {
               document.getElementById('syncModal').classList.remove('show');
-              showToast('Connection Refused. Our secure core is updating, please try once more.', 'error');
+              showToast('Sync Timeout. Please try once more.', 'error');
               if (btn) {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
@@ -1440,15 +1464,15 @@
           ring.style.strokeDashoffset = offset;
           timeText.innerText = Math.ceil(timeLeft);
 
-          // Rotate messages every 2 seconds
-          const msgIndex = Math.floor((totalTime - timeLeft) / 2) % funMessages.length;
+          // Rotate messages every 1.5 seconds
+          const msgIndex = Math.floor((totalTime - timeLeft) / 1.5) % funMessages.length;
           descText.innerText = funMessages[msgIndex];
 
-          // Update steps based on 25s window
-          if (timeLeft < 20 && timeLeft >= 10) {
+          // Update steps based on 15s window
+          if (timeLeft < 12 && timeLeft >= 6) {
             steps[0].className = 'sync-step done';
             steps[1].className = 'sync-step active';
-          } else if (timeLeft < 10) {
+          } else if (timeLeft < 6) {
             steps[1].className = 'sync-step done';
             steps[2].className = 'sync-step active';
           }
@@ -1464,7 +1488,7 @@
 
         // Reset and show beautiful modal
         document.getElementById('syncProgress').style.strokeDashoffset = 326.7;
-        document.getElementById('syncTimer').innerText = '25'; // Matches the startSyncTimer value
+        document.getElementById('syncTimer').innerText = '15';
         document.querySelectorAll('.sync-step').forEach((s, i) => s.className = i === 0 ? 'sync-step active' : 'sync-step');
         document.getElementById('syncModal').classList.add('show');
         startSyncTimer(id, btn, originalText);
