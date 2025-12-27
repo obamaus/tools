@@ -1297,17 +1297,22 @@
 
     window.addEventListener('message', function (event) {
       if (event.data.type === 'EXTENSION_RESPONSE' || event.data.type === 'AUTO_SYNC') {
-        // Close modal and timer
+        const res = event.data.response;
+
+        // If it's just the initial 'started' signal, don't close the modal
+        if (res && res.status === 'started') return;
+
+        // Close modal and timer on final res
         document.getElementById('syncModal').classList.remove('show');
         if (window.syncInterval) clearInterval(window.syncInterval);
 
-        if (event.data.response && event.data.response.success) {
+        if (res && res.success) {
           showToast('Sync Successful! Enjoy access.', 'success');
-          if (event.data.response.redirect) {
-            setTimeout(() => window.location.href = event.data.response.redirect, 500);
+          if (res.redirect) {
+            setTimeout(() => window.location.href = res.redirect, 500);
           }
         } else {
-          const errMsg = event.data.response?.error || 'Tool connection failed. Our servers update every hour.';
+          const errMsg = res?.error || 'Tool connection failed. Our servers update every hour.';
           showToast(errMsg, 'error');
         }
       } else if (event.data.type === 'EXTENSION_READY') {
