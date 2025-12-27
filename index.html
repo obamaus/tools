@@ -1230,7 +1230,11 @@
           if (BLACKLIST.includes(s.name)) return;
 
           let base = s.name.replace(/\s*[0-9](\.[0-9])?$/, '').trim();
-          if (base.toLowerCase() === 'chatgpt') base = 'ChatGPT';
+
+          // Deduplication Logic
+          const lowerBase = base.toLowerCase();
+          if (lowerBase.includes('chatgpt')) base = 'ChatGPT';
+          if (lowerBase.includes('hix')) base = 'Hix AI';
 
           if (!groups[base]) {
             groups[base] = {
