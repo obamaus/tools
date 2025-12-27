@@ -928,7 +928,7 @@
             <circle id="syncProgress" class="progress-ring-circle" stroke="var(--primary)" stroke-width="8"
               stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" />
           </svg>
-          <div class="sync-timer" id="syncTimer">15</div>
+          <div class="sync-timer" id="syncTimer">25</div>
         </div>
         <h2 id="syncTitle">Establishing Secure Connection</h2>
         <p id="syncDesc">Synchronizing your premium session with the secure core. Please do not close this tab.</p>
@@ -1250,8 +1250,8 @@
           "Almost there, stay focused..."
         ];
 
-        let timeLeft = 15;
-        let totalTime = 15;
+        let timeLeft = 25;
+        let totalTime = 25;
         const circumference = 326.7;
 
         ring.style.strokeDasharray = circumference;
@@ -1280,11 +1280,11 @@
           const msgIndex = Math.floor((totalTime - timeLeft) / 2) % funMessages.length;
           descText.innerText = funMessages[msgIndex];
 
-          // Update steps based on 15s window
-          if (timeLeft < 13 && timeLeft >= 7) {
+          // Update steps based on 25s window
+          if (timeLeft < 20 && timeLeft >= 10) {
             steps[0].className = 'sync-step done';
             steps[1].className = 'sync-step active';
-          } else if (timeLeft < 7) {
+          } else if (timeLeft < 10) {
             steps[1].className = 'sync-step done';
             steps[2].className = 'sync-step active';
           }
