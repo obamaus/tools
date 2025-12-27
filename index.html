@@ -1271,10 +1271,11 @@
           if (lowerBase.includes('hix')) base = 'Hix AI';
 
           if (!groups[base]) {
+            const metaKey = Object.keys(TOOL_META).find(k => base.toLowerCase().includes(k.toLowerCase()));
             groups[base] = {
               name: base,
               servers: [],
-              meta: TOOL_META[Object.keys(TOOL_META).find(k => base.includes(k))] || { cat: 'other', desc: 'Premium shared access for this platform.' }
+              meta: TOOL_META[metaKey] || { cat: 'other', desc: 'Premium shared access for this platform.' }
             };
           }
           groups[base].servers.push(s);
@@ -1307,7 +1308,18 @@
             const popCard = document.createElement('div');
             popCard.className = 'pop-card';
             popCard.onclick = () => {
-              // If single server, launch immediately. Otherwise scroll to main card.
+              // Ensure the tool is visible by switching to its correct category
+              const targetCat = g.meta.cat;
+              const buttons = document.querySelectorAll('.tab-btn');
+              let targetBtn = null;
+              buttons.forEach(b => {
+                const attr = b.getAttribute('onclick') || '';
+                if (attr.includes(`'${targetCat}'`)) targetBtn = b;
+              });
+
+              if (targetBtn) setTab(targetCat, targetBtn);
+              else setTab('all', buttons[0]);
+
               if (g.servers.length === 1) {
                 handleToolAction(g.servers[0].id, popCard);
               } else {
