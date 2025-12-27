@@ -1410,7 +1410,40 @@
       // Delay the periodic check to avoid rapid annoying refreshes
       setInterval(ping, 6000); // Check every 6 seconds instead of 3
       render();
+      function showDebugReport() {
+        if (!isExtensionReady) {
+          alert("Extension not detected. Cannot fetch logs.");
+          return;
+        }
+        window.postMessage({ type: 'GET_DEBUG_LOGS' }, '*');
+      }
+
+      window.addEventListener('message', function (event) {
+        if (event.data.type === 'DEBUG_LOGS_RESPONSE') {
+          const logs = event.data.logs;
+          // Alert is safer than clipboard for some browsers, but clipboard is better UX.
+          // Let's do a simple textarea modal.
+          const el = document.createElement('textarea');
+          el.value = logs;
+          el.style.position = 'fixed';
+          el.style.top = '10%';
+          el.style.left = '10%';
+          el.style.width = '80%';
+          el.style.height = '80%';
+          el.style.zIndex = '999999';
+          document.body.appendChild(el);
+          el.select();
+          document.execCommand('copy');
+          alert("Logs copied to clipboard! (You can also copy them from the text box manually). Click OK to close.");
+          document.body.removeChild(el);
+        }
+      });
     </script>
+    <div style="text-align: center; margin-top: 2rem; padding-bottom: 2rem; opacity: 0.7;">
+      <button onclick="showDebugReport()"
+        style="background:none; border:none; color: #888; cursor: pointer; text-decoration: underline; font-size: 0.9rem;">[DEV]
+        Copy Debug Logs</button>
+    </div>
 </body>
 
 </html>
