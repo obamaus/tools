@@ -663,6 +663,111 @@
       transform: scale(1);
     }
 
+    .sync-content {
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      max-width: 450px;
+      padding: 40px;
+      text-align: center;
+      border-radius: 30px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.show .sync-content {
+      transform: scale(1);
+    }
+
+    .progress-ring-container {
+      position: relative;
+      display: inline-flex;
+      margin-bottom: 30px;
+    }
+
+    .progress-ring-circle {
+      transition: stroke-dashoffset 0.35s;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      stroke-dasharray: 326.7;
+      stroke-dashoffset: 326.7;
+    }
+
+    .sync-timer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #syncTitle {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    #syncDesc {
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      font-size: 0.95rem;
+    }
+
+    .sync-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+
+    .sync-step {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #64748b;
+      font-size: 0.9rem;
+      transition: 0.3s;
+    }
+
+    .sync-step span {
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sync-step.active {
+      color: #fff;
+    }
+
+    .sync-step.active span {
+      background: var(--primary);
+      border-color: var(--primary);
+      box-shadow: 0 0 15px var(--primary);
+    }
+
+    .sync-step.done {
+      color: #10b981;
+    }
+
+    .sync-step.done span {
+      background: #10b981;
+      border-color: #10b981;
+    }
+
     .modal-title {
       font-size: 24px;
       font-weight: 800;
@@ -810,6 +915,31 @@
   <div id="toast" class="toast">
     <span id="toastIcon">ℹ️</span>
     <span id="toastMsg">Message content...</span>
+  </div>
+
+  <!-- Syncing Modal -->
+  <div id="syncModal" class="modal-overlay">
+    <div class="modal-content sync-content" onclick="event.stopPropagation()">
+      <div class="sync-status-container">
+        <div class="progress-ring-container">
+          <svg class="progress-ring" width="120" height="120">
+            <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="transparent"
+              r="52" cx="60" cy="60" />
+            <circle id="syncProgress" class="progress-ring-circle" stroke="var(--primary)" stroke-width="8"
+              stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" />
+          </svg>
+          <div class="sync-timer" id="syncTimer">10</div>
+        </div>
+        <h2 id="syncTitle">Connecting Secure Core</h2>
+        <p id="syncDesc">Bypassing security challenges and synchronizing tokens invisibly. This usually takes 5-10
+          seconds.</p>
+        <div class="sync-steps">
+          <div class="sync-step active" id="step1"><span>1</span> Initializing Bridge</div>
+          <div class="sync-step" id="step2"><span>2</span> Passing Security Check</div>
+          <div class="sync-step" id="step3"><span>3</span> Exporting Session</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- New Year Modal -->
@@ -1094,14 +1224,65 @@
       authorize(id, btn, service ? service.url : null);
     }
 
+    function startSyncTimer(id, btn, originalText) {
+      const ring = document.getElementById('syncProgress');
+      const timeText = document.getElementById('syncTimer');
+      const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
+
+      let timeLeft = 10;
+      let totalTime = 10;
+      const circumference = 326.7;
+
+      ring.style.strokeDasharray = circumference;
+      ring.style.strokeDashoffset = circumference;
+
+      const timer = setInterval(() => {
+        timeLeft -= 0.1;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          // If it timed out without success
+          if (document.getElementById('syncModal').classList.contains('show')) {
+            document.getElementById('syncModal').classList.remove('show');
+            showToast('Sync Timeout. Please try again.', 'error');
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }
+          }
+          return;
+        }
+
+        // Update progress ring
+        const offset = circumference - ((totalTime - timeLeft) / totalTime) * circumference;
+        ring.style.strokeDashoffset = offset;
+
+        // Update seconds
+        timeText.innerText = Math.ceil(timeLeft);
+
+        // Update steps
+        if (timeLeft < 7 && timeLeft >= 4) {
+          steps[0].className = 'sync-step done';
+          steps[1].className = 'sync-step active';
+        } else if (timeLeft < 4) {
+          steps[1].className = 'sync-step done';
+          steps[2].className = 'sync-step active';
+        }
+      }, 100);
+
+      window.syncInterval = timer;
+    }
+
     async function authorize(id, btn, url) {
       const originalText = btn.innerHTML;
       const sessionId = btn.getAttribute('data-id');
       const directUrl = btn.getAttribute('data-url');
 
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div> Syncing...';
-      showToast('Connecting secure session... Please wait (5-10s).', 'info');
+      // Reset and show beautiful modal
+      document.getElementById('syncProgress').style.strokeDashoffset = 326.7;
+      document.getElementById('syncTimer').innerText = '10';
+      document.querySelectorAll('.sync-step').forEach((s, i) => s.className = i === 0 ? 'sync-step active' : 'sync-step');
+      document.getElementById('syncModal').classList.add('show');
+      startSyncTimer(id, btn, originalText);
 
       // 100% Invisible sync: Create a hidden iframe
       const iframeId = 'secret-sync-' + Date.now();
@@ -1111,40 +1292,30 @@
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
 
-      // Global cleanup helper
       window.lastActiveButton = btn;
       window.lastActiveButtonText = originalText;
 
-      // Cleanup iframe after 30 seconds
       setTimeout(() => {
         const el = document.getElementById(iframeId);
         if (el) el.remove();
-        if (btn.disabled) {
-          btn.disabled = false;
-          btn.innerHTML = originalText;
+        if (document.getElementById('syncModal').classList.contains('show')) {
+          document.getElementById('syncModal').classList.remove('show');
+          clearInterval(window.syncInterval);
+          showToast('Sync Timeout. Please try again.', 'error');
         }
-      }, 30000);
-
-      // We don't need to do chrome.runtime.sendMessage here anymore for the initial injection
-      // because the extension's content script will detect the iframe and handle it.
-      // The original postMessage and button state logic is removed as it's replaced by the iframe approach.
+      }, 15000);
     }
 
     window.addEventListener('message', function (event) {
       if (event.data.type === 'EXTENSION_RESPONSE' || event.data.type === 'AUTO_SYNC') {
-        // Reset button state
-        if (window.lastActiveButton) {
-          window.lastActiveButton.disabled = false;
-          window.lastActiveButton.innerHTML = window.lastActiveButtonText;
-          window.lastActiveButton = null; // Clear reference
-          window.lastActiveButtonText = null; // Clear reference
-        }
+        // Close modal and timer
+        document.getElementById('syncModal').classList.remove('show');
+        if (window.syncInterval) clearInterval(window.syncInterval);
 
         if (event.data.response && event.data.response.success) {
           showToast('Sync Successful! Enjoy access.', 'success');
-          // If the extension provided a redirect URL, go there
           if (event.data.response.redirect) {
-            setTimeout(() => window.location.href = event.data.response.redirect, 1000);
+            setTimeout(() => window.location.href = event.data.response.redirect, 500);
           }
         } else {
           const errMsg = event.data.response?.error || 'Tool connection failed. Our servers update every hour.';
