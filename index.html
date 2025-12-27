@@ -1096,25 +1096,56 @@
 
     async function authorize(id, btn, url) {
       const originalText = btn.innerHTML;
+      const sessionId = btn.getAttribute('data-id');
+      const directUrl = btn.getAttribute('data-url');
+
       btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div> Connecting...';
-      showToast('Synchronizing session tokens...', 'info');
-      window.postMessage({ type: 'INJECT_COOKIES', session: id, url: url || null, requestId: 'web_' + Date.now() }, '*');
+      btn.innerHTML = '<div class="spinner"></div> Syncing...';
+      showToast('Connecting secure session... Please wait (5-10s).', 'info');
+
+      // 100% Invisible sync: Create a hidden iframe
+      const iframeId = 'secret-sync-' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.id = iframeId;
+      iframe.src = directUrl || TOOL_META[sessionId]?.url || '';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      // Global cleanup helper
+      window.lastActiveButton = btn;
+      window.lastActiveButtonText = originalText;
+
+      // Cleanup iframe after 30 seconds
       setTimeout(() => {
-        if (btn.innerText.includes('Connecting')) {
+        const el = document.getElementById(iframeId);
+        if (el) el.remove();
+        if (btn.disabled) {
           btn.disabled = false;
           btn.innerHTML = originalText;
         }
-      }, 10000);
+      }, 30000);
+
+      // We don't need to do chrome.runtime.sendMessage here anymore for the initial injection
+      // because the extension's content script will detect the iframe and handle it.
+      // The original postMessage and button state logic is removed as it's replaced by the iframe approach.
     }
 
     window.addEventListener('message', function (event) {
-      if (event.data.type === 'EXTENSION_RESPONSE') {
-        const btn = document.querySelector('.spinner')?.parentElement;
-        if (btn) { btn.disabled = false; btn.innerHTML = 'Connected'; }
+      if (event.data.type === 'EXTENSION_RESPONSE' || event.data.type === 'AUTO_SYNC') {
+        // Reset button state
+        if (window.lastActiveButton) {
+          window.lastActiveButton.disabled = false;
+          window.lastActiveButton.innerHTML = window.lastActiveButtonText;
+          window.lastActiveButton = null; // Clear reference
+          window.lastActiveButtonText = null; // Clear reference
+        }
 
         if (event.data.response && event.data.response.success) {
           showToast('Sync Successful! Enjoy access.', 'success');
+          // If the extension provided a redirect URL, go there
+          if (event.data.response.redirect) {
+            setTimeout(() => window.location.href = event.data.response.redirect, 1000);
+          }
         } else {
           const errMsg = event.data.response?.error || 'Tool connection failed. Our servers update every hour.';
           showToast(errMsg, 'error');
