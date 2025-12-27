@@ -64,9 +64,25 @@
     }
 
     .brand img {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(37, 99, 235, 0.3);
+      animation: pulse-glow 3s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.6);
+      }
+
+      100% {
+        box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
+      }
     }
 
     .nav-actions {
@@ -151,18 +167,35 @@
     }
 
     .hero h1 {
-      font-size: clamp(28px, 5vw, 48px);
-      margin-bottom: 16px;
-      line-height: 1.2;
+      font-size: clamp(32px, 6vw, 56px);
+      margin-bottom: 20px;
+      line-height: 1.1;
       color: #fff;
       font-weight: 800;
+      background: linear-gradient(to bottom, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: slide-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .hero p {
       color: var(--text-muted);
-      font-size: 16px;
+      font-size: 18px;
       max-width: 600px;
       margin: 0 auto;
+      animation: slide-up 1s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
     /* Controls */
@@ -229,6 +262,12 @@
 
     .tab-btn.active {
       background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    .tab-btn:not(.active):hover {
+      background: rgba(255, 255, 255, 0.05);
       color: white;
     }
 
@@ -598,30 +637,115 @@
     }
 
     .hero-announcement {
-      background: rgba(37, 99, 235, 0.1);
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.1), rgba(139, 92, 246, 0.1));
       border: 1px solid var(--primary);
-      color: var(--primary);
-      padding: 12px 20px;
+      color: var(--text);
+      padding: 12px 24px;
       border-radius: 50px;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
       display: inline-block;
       font-size: 14px;
       cursor: pointer;
       font-weight: 600;
-      transition: 0.2s;
+      transition: 0.3s;
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.1);
     }
 
     .hero-announcement:hover {
       background: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Popular Section */
+    .popular-section {
+      padding: 0 5% 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+    }
+
+    .section-title span {
+      background: var(--primary);
       color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .popular-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+    }
+
+    .pop-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 15px;
+      text-align: center;
+      transition: 0.3s;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pop-card:hover {
+      background: rgba(37, 99, 235, 0.1);
+      border-color: var(--primary);
+      transform: translateY(-5px);
+    }
+
+    .pop-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .pop-name {
+      font-size: 14px;
+      font-weight: 700;
     }
 
     .maintenance-note {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--warning);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: block;
       font-weight: 600;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 850px) {
+      .popular-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .popular-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     /* Modal */
@@ -876,6 +1000,13 @@
     </div>
   </div>
 
+  <div class="popular-section" id="popularSection">
+    <h3 class="section-title">🔥 Popular Tool <span>Top Rated</span></h3>
+    <div class="popular-grid" id="popularGrid">
+      <!-- Injected -->
+    </div>
+  </div>
+
   <div class="controls">
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="Search for tools (e.g. Netflix, ChatGPT, Semrush...)">
@@ -1115,16 +1246,45 @@
 
       function render() {
         const grid = document.getElementById('grid');
+        const popGrid = document.getElementById('popularGrid');
+        const popSection = document.getElementById('popularSection');
         grid.innerHTML = '';
+        popGrid.innerHTML = '';
+
         const query = document.getElementById('searchInput').value.toLowerCase();
 
         if (currentTab === 'pricing') {
+          popSection.style.display = 'none';
           renderPricing();
           return;
         }
+        popSection.style.display = 'block';
 
         const groups = getGroups();
+        const POPULAR_TOOLS = ['Netflix', 'Prime Video', 'Udemy', 'Coursera', 'ChatGPT'];
+
         Object.values(groups).forEach(g => {
+          // Render Popular Section (Only if no search query)
+          if (!query && POPULAR_TOOLS.some(p => g.name.toLowerCase().includes(p.toLowerCase()))) {
+            const popCard = document.createElement('div');
+            popCard.className = 'pop-card';
+            popCard.onclick = () => {
+              // If single server, launch immediately. Otherwise scroll to main card.
+              if (g.servers.length === 1) {
+                handleToolAction(g.servers[0].id, popCard);
+              } else {
+                document.getElementById('searchInput').value = g.name;
+                render();
+                document.getElementById('grid').scrollIntoView({ behavior: 'smooth' });
+              }
+            };
+            popCard.innerHTML = `
+                <div class="pop-icon">${getIcon(g.meta.cat)}</div>
+                <div class="pop-name">${g.name}</div>
+            `;
+            popGrid.appendChild(popCard);
+          }
+
           if (currentTab !== 'all' && g.meta.cat !== currentTab) return;
           if (query && !g.name.toLowerCase().includes(query)) return;
 
@@ -1134,7 +1294,7 @@
                     <div class="card-header">
                         <div class="card-icon">${getIcon(g.meta.cat)}</div>
                         <div>
-                          <span class="maintenance-note">⚡ Auto-updates every hour</span>
+                          <span class="maintenance-note">⚡ Auto-updates 24/7</span>
                           <h2 class="card-title">${g.name}</h2>
                         </div>
                     </div>
