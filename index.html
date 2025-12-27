@@ -1235,10 +1235,23 @@
       function startSyncTimer(id, btn, originalText) {
         const ring = document.getElementById('syncProgress');
         const timeText = document.getElementById('syncTimer');
+        const descText = document.getElementById('syncDesc');
         const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 
-        let timeLeft = 60;
-        let totalTime = 60;
+        const funMessages = [
+          "Initializing Ghost Protocol...",
+          "Bypassing LiteSpeed Security...",
+          "Negotiating Secure Handshake...",
+          "Decrypting Session Tokens...",
+          "Establishing Encrypted Tunnel...",
+          "Extracting Premium Artifacts...",
+          "Polishing Secure Connection...",
+          "Bypassing Anti-Bot Check...",
+          "Almost there, stay focused..."
+        ];
+
+        let timeLeft = 90;
+        let totalTime = 90;
         const circumference = 326.7;
 
         ring.style.strokeDasharray = circumference;
@@ -1248,7 +1261,6 @@
           timeLeft -= 0.1;
           if (timeLeft <= 0) {
             clearInterval(timer);
-            // If it timed out without success
             if (document.getElementById('syncModal').classList.contains('show')) {
               document.getElementById('syncModal').classList.remove('show');
               showToast('Connection Refused. Our secure core is updating, please try once more.', 'error');
@@ -1264,11 +1276,15 @@
           ring.style.strokeDashoffset = offset;
           timeText.innerText = Math.ceil(timeLeft);
 
-          // Update steps based on a 60s window
-          if (timeLeft < 55 && timeLeft >= 25) {
+          // Rotate messages every 8 seconds
+          const msgIndex = Math.floor((totalTime - timeLeft) / 8) % funMessages.length;
+          descText.innerText = funMessages[msgIndex];
+
+          // Update steps based on 90s window
+          if (timeLeft < 80 && timeLeft >= 40) {
             steps[0].className = 'sync-step done';
             steps[1].className = 'sync-step active';
-          } else if (timeLeft < 25) {
+          } else if (timeLeft < 40) {
             steps[1].className = 'sync-step done';
             steps[2].className = 'sync-step active';
           }
