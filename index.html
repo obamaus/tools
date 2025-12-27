@@ -928,7 +928,7 @@
             <circle id="syncProgress" class="progress-ring-circle" stroke="var(--primary)" stroke-width="8"
               stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" />
           </svg>
-          <div class="sync-timer" id="syncTimer">30</div>
+          <div class="sync-timer" id="syncTimer">45</div>
         </div>
         <h2 id="syncTitle">Establishing Secure Connection</h2>
         <p id="syncDesc">Synchronizing your premium session with the secure core. Please do not close this tab.</p>
@@ -1228,8 +1228,8 @@
       const timeText = document.getElementById('syncTimer');
       const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 
-      let timeLeft = 30;
-      let totalTime = 30;
+      let timeLeft = 45;
+      let totalTime = 45;
       const circumference = 326.7;
 
       ring.style.strokeDasharray = circumference;
@@ -1242,7 +1242,7 @@
           // If it timed out without success
           if (document.getElementById('syncModal').classList.contains('show')) {
             document.getElementById('syncModal').classList.remove('show');
-            showToast('Sync Timeout. Our servers are very busy, please try again.', 'error');
+            showToast('Connection Refused. Our secure core is updating, please try once more.', 'error');
             if (btn) {
               btn.disabled = false;
               btn.innerHTML = originalText;
@@ -1255,11 +1255,11 @@
         ring.style.strokeDashoffset = offset;
         timeText.innerText = Math.ceil(timeLeft);
 
-        // Update steps based on a 30s window
-        if (timeLeft < 25 && timeLeft >= 15) {
+        // Update steps based on a 45s window
+        if (timeLeft < 40 && timeLeft >= 20) {
           steps[0].className = 'sync-step done';
           steps[1].className = 'sync-step active';
-        } else if (timeLeft < 15) {
+        } else if (timeLeft < 20) {
           steps[1].className = 'sync-step done';
           steps[2].className = 'sync-step active';
         }
