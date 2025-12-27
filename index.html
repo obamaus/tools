@@ -928,7 +928,7 @@
             <circle id="syncProgress" class="progress-ring-circle" stroke="var(--primary)" stroke-width="8"
               stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60" />
           </svg>
-          <div class="sync-timer" id="syncTimer">10</div>
+          <div class="sync-timer" id="syncTimer">30</div>
         </div>
         <h2 id="syncTitle">Establishing Secure Connection</h2>
         <p id="syncDesc">Synchronizing your premium session with the secure core. Please do not close this tab.</p>
@@ -1228,8 +1228,8 @@
       const timeText = document.getElementById('syncTimer');
       const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3')];
 
-      let timeLeft = 10;
-      let totalTime = 10;
+      let timeLeft = 30;
+      let totalTime = 30;
       const circumference = 326.7;
 
       ring.style.strokeDasharray = circumference;
@@ -1242,7 +1242,7 @@
           // If it timed out without success
           if (document.getElementById('syncModal').classList.contains('show')) {
             document.getElementById('syncModal').classList.remove('show');
-            showToast('Sync Timeout. Please try again.', 'error');
+            showToast('Sync Timeout. Our servers are very busy, please try again.', 'error');
             if (btn) {
               btn.disabled = false;
               btn.innerHTML = originalText;
@@ -1251,18 +1251,15 @@
           return;
         }
 
-        // Update progress ring
         const offset = circumference - ((totalTime - timeLeft) / totalTime) * circumference;
         ring.style.strokeDashoffset = offset;
-
-        // Update seconds
         timeText.innerText = Math.ceil(timeLeft);
 
-        // Update steps
-        if (timeLeft < 7 && timeLeft >= 4) {
+        // Update steps based on a 30s window
+        if (timeLeft < 25 && timeLeft >= 15) {
           steps[0].className = 'sync-step done';
           steps[1].className = 'sync-step active';
-        } else if (timeLeft < 4) {
+        } else if (timeLeft < 15) {
           steps[1].className = 'sync-step done';
           steps[2].className = 'sync-step active';
         }
