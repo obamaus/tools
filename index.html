@@ -212,17 +212,41 @@
     .search-container {
       width: 100%;
       max-width: 500px;
+      position: relative;
     }
 
     #searchInput {
       width: 100%;
-      padding: 14px 20px;
+      padding: 14px 45px 14px 20px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       border-radius: 12px;
       color: white;
       font-size: 15px;
       transition: 0.2s;
+    }
+
+    #clearSearch {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    #clearSearch:hover {
+      background: var(--error);
     }
 
     #searchInput:focus {
@@ -657,6 +681,87 @@
       box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
     }
 
+    /* Download CTA */
+    .download-cta-section {
+      padding: 0 5% 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .download-cta {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.1), rgba(139, 92, 246, 0.1));
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      border-radius: 20px;
+      padding: 25px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .download-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .download-icon-box {
+      width: 50px;
+      height: 50px;
+      background: var(--primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .download-text h4 {
+      font-size: 18px;
+      margin-bottom: 4px;
+    }
+
+    .download-text p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .download-btn-main {
+      background: white;
+      color: black;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .download-btn-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(255, 255, 255, 0.1);
+      background: #f1f5f9;
+    }
+
+    @media (max-width: 768px) {
+      .download-cta {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+      }
+
+      .download-info {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+
     /* Popular Section */
     .popular-section {
       padding: 0 5% 40px;
@@ -1013,17 +1118,32 @@
   </div>
 
   <div class="hero">
-    <div class="hero-announcement" onclick="showGiftModal()">
-      ✨ <b>FREE ACCESS:</b> Happy New Year 2026! Click to view gift credentials. ✨
+    <div class="hero-announcement">
+      ✨ <b>FREE MEGA ACCESS:</b> No Login Required! Enjoy 150+ premium tools for free this month. ✨
     </div>
     <h1 id="heroTitle">Professional Toolkit for Creators & SEOs</h1>
-    <p id="heroDesc">One-click access to 150+ premium subscriptions. Securely shared, no data collected.</p>
+    <p id="heroDesc">Instant free access to 150+ premium subscriptions. Securely shared via ObamaTools Core.</p>
   </div>
 
   <div class="status-container">
     <div class="status-bar" id="extStatus">
       <div class="status-dot inactive" id="extDot"></div>
       <span id="extText">Connecting to Secure Core...</span>
+    </div>
+  </div>
+
+  <div class="download-cta-section">
+    <div class="download-cta">
+      <div class="download-info">
+        <div class="download-icon-box">🛡️</div>
+        <div class="download-text">
+          <h4>Download ObamaTools Core</h4>
+          <p>Required to synchronize premium sessions securely. Setup takes 30 seconds.</p>
+        </div>
+      </div>
+      <a href="download.html" class="download-btn-main">
+        Setup Extension <span>➜</span>
+      </a>
     </div>
   </div>
 
@@ -1037,6 +1157,7 @@
   <div class="controls">
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="Search for tools (e.g. Netflix, ChatGPT, Semrush...)">
+      <button id="clearSearch" onclick="clearSearch()">✕</button>
     </div>
     <div class="tabs">
       <button class="tab-btn active" onclick="setTab('all', this)">All Tools</button>
@@ -1239,11 +1360,15 @@
 
       function renderAuthLinks(logged) {
         const container = document.getElementById('authContainer');
+        // Login/Logout disabled for the free access month
+        container.innerHTML = '';
+        /*
         if (logged) {
           container.innerHTML = `<button class="auth-btn logout-btn" onclick="logout()">Logout</button>`;
         } else {
           container.innerHTML = `<a href="login.html" class="auth-btn login-btn">Login</a>`;
         }
+        */
       }
 
       function logout() {
@@ -1360,9 +1485,22 @@
           grid.appendChild(card);
         });
 
+        // Show/Hide search clear button
+        const clearBtn = document.getElementById('clearSearch');
+        if (query) {
+          clearBtn.style.display = 'flex';
+        } else {
+          clearBtn.style.display = 'none';
+        }
+
         if (grid.innerHTML === '') {
           grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 100px; color: var(--text-muted);">No tools found matching your search.</div>`;
         }
+      }
+
+      function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        render();
       }
 
       function renderPricing() {
@@ -1426,11 +1564,14 @@
       }
 
       function handleToolAction(id, btn) {
+        // Login requirement temporarily removed - Free access month
+        /*
         if (!currentUser) {
           showToast('Please login to access tools', 'error');
           setTimeout(() => window.location.href = 'login.html', 1500);
           return;
         }
+        */
 
         if (!isExtensionReady) {
           showToast('Download Extension First', 'error');
